@@ -82,7 +82,7 @@ public class GameManager
         gameTimer = new AnimationTimer() {
             @Override
             public void handle(long l) {
-               // if(player.positionY > 800) gameTimer.stop();
+                if(player.getPositionY() > 800) gameTimer.stop();
                 if(player.getPositionY() < 400) startedGame = true;
                 if(startedGame) moveSteps();
                 else
@@ -119,8 +119,6 @@ public class GameManager
                 if(player.isOnGround() == true) player.setFallingDown(false);
                 else player.setFallingDown(true);
 
-                //if(isGravity == true) gravity.setGravity(1);
-               // else gravity.setGravity(0);
                 if(player.getVelocityY() > -2) player.setFallingDown(true);
                 else player.setFallingDown(false);
 
@@ -132,9 +130,8 @@ public class GameManager
 
                 if(player.isOnGround() == false)
                 {
-                    //gamer.setRotate(rotateCombo);
-                }
-                else rotateCombo = 0;
+                    gamer.setRotate(rotateCombo);
+                } else gamer.setRotate(0);
                 rotateCombo+=10;
                 if(rotateCombo > 360) rotateCombo = 0;
 
@@ -272,15 +269,13 @@ public class GameManager
         }
 
         if (collisionDetected && player.isFallingDown() == true) {
-            //block.setFill(Color.BLUE);
-            player.setVelocityY(4); // predkosc_schodkow - 1
+            player.setVelocityY(4); // predkosc_schodkow
             player.setFallingDown(false);
             player.setOnGround(true);
             score = steps.get(index).getIndex();
             displayScore();
         } else {
             player.setOnGround(false);
-            //block.setFill(Color.GREEN);
         }
     }
 

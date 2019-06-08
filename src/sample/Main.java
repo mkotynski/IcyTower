@@ -7,8 +7,7 @@ import view.ViewManager;
 public class Main extends Application {
 
     @Override
-    public void start(Stage primaryStage) throws Exception{
-        //Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
+    public void start(Stage primaryStage){
             try
             {
                 ViewManager manager = new ViewManager();

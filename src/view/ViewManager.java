@@ -34,7 +34,6 @@ public class ViewManager
     {
         menuButtons = new ArrayList<>();
         mainPane = new AnchorPane();
-        //mainPane.setStyle("-fx-background-color:black;");
         mainScene = new Scene(mainPane, WIDTH, HEIGHT);
         mainStage = new Stage();
         mainStage.setScene(mainScene);
@@ -54,6 +53,7 @@ public class ViewManager
         subScene.moveSubScene();
         sceneToHide = subScene;
     }
+
     private void createSubScenes()
     {
         helpSubScene = new OurSubScene();
@@ -61,62 +61,7 @@ public class ViewManager
 
         scoreSubScene = new OurSubScene();
         mainPane.getChildren().add(scoreSubScene);
-
-        //createShipChooserSubScene();
     }
-
-   /* private void createShipChooserSubScene()
-    {
-        shipChooserScene = new OurSubScene();
-        mainPane.getChildren().add(shipChooserScene);
-
-        InfoLabel chooseShipLabel = new InfoLabel("CHOOSE UR SHIP");
-        chooseShipLabel.setLayoutX(110);
-        chooseShipLabel.setLayoutY(-50);
-        shipChooserScene.getPane().getChildren().add(chooseShipLabel);
-
-        shipChooserScene.getPane().getChildren().add(createShipsToChoose());
-        shipChooserScene.getPane().getChildren().add(createButtonToStart());
-    }
-
-    private HBox createShipsToChoose()
-    {
-        HBox box = new HBox();
-        box.setSpacing(20);
-        shipsList = new ArrayList<>();
-        for(SHIP ship : SHIP.values())
-        {
-            ShipPicker shipToPick = new ShipPicker(ship);
-            shipsList.add(shipToPick);
-            box.getChildren().add(shipToPick);
-            shipToPick.setOnMouseClicked(MouseEvent -> {
-               for(ShipPicker shipx: shipsList)
-               {
-                   shipx.setIsCircleChoosen(false);
-               }
-               shipToPick.setIsCircleChoosen(true);
-               choosenShip = shipToPick.getShip();
-            });
-        }
-        box.setLayoutX(300-(118*2));
-        box.setLayoutY(80);
-        return box;
-    }*/
-
-   /* private OurButton createButtonToStart()
-    {
-        OurButton startButton =  new OurButton("START");
-        startButton.setLayoutY(200);
-        startButton.setLayoutX(200);
-        startButton.setOnAction(actionEvent -> {
-            if(choosenShip != null)
-            {
-                GameManager gameManager = new GameManager();
-                gameManager.createNewGame(mainStage);
-            }
-        });
-        return startButton;
-    }*/
 
     public Stage getMainStage()
     {

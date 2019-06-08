@@ -1,20 +1,5 @@
 package view;
 
-import javafx.animation.AnimationTimer;
-import javafx.scene.Scene;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import javafx.stage.Stage;
-import model.SHIP;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
 public class GameViewManager
 {
     /*private AnchorPane gamePane;
