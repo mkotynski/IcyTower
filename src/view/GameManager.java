@@ -250,7 +250,7 @@ public class GameManager
 
     }
 
-    private void moveSteps()
+    private void moveSteps()//komentarz`aaaaaa
     {
         for(int level = 0; level < 10; level++) {
             for (int i = level*100; i < 100+level*100; i++) {
