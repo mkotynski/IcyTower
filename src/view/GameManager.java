@@ -253,7 +253,7 @@ public class GameManager
     private void moveSteps()
     {
         for(int level = 0; level < 10; level++) {
-            for (int i = 0+level*100; i < 100+level*100; i++) {
+            for (int i = level*100; i < 100+level*100; i++) {
                 //if(player.velocityY < 0)
                 steps.get(i).positionY += 5;
                 //else if(player.velocityY > 1) steps.get(i).positionY  -=1;
