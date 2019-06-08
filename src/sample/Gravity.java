@@ -1,4 +1,4 @@
-package view;
+package sample;
 
 public class Gravity
 {
@@ -9,7 +9,7 @@ public class Gravity
         this.val = val;
     }
 
-    public void incGravity() { val = val + 0.1; };
+    public void incGravity() { val = val + 0.1; }
     public void setGravity(double val) { this.val = val;}
     public double getGravity() { return val; }
 }

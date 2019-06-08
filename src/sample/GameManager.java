@@ -1,15 +1,8 @@
-package view;
+package sample;
 
 import javafx.animation.AnimationTimer;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.effect.DropShadow;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -17,7 +10,6 @@ import javafx.scene.shape.Shape;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -40,17 +32,13 @@ public class GameManager
     private boolean isSpaceBarPressed = false;
     private boolean isSuperJump = false;
 
-    private int angle;
     private int rotateCombo;
-    double rightA = 0;
-    double leftA = 0;
-    boolean startedGame = false;
-    double a = 0;
-    StackPane scoreStack = new StackPane();
-    Stage menuStage;
-    int score = 0;
+    private boolean startedGame = false;
+    private double a = 0;
+    private StackPane scoreStack = new StackPane();
+    private Stage menuStage;
+    private int score = 0;
 
-    boolean isGravity = true;
 
     List<Step> steps = new ArrayList<>();
     List<Rectangle> stepsShapes = new ArrayList<>();
@@ -59,23 +47,22 @@ public class GameManager
     {
         initializeStage();
         createKeyListeners();
-        //createNewGame();
     }
 
     public void createNewGame(Stage menuStage) {
         this.menuStage = menuStage;
         this.menuStage.hide();
         player = new Player();
-        player.positionX = 250;
-        player.positionY = 610;
-        player.velocityX = 0;
-        player.velocityY = 0;
-        player.onGround = false;
+        player.setPositionX(250);
+        player.setPositionY(610);
+        player.setVelocityX(0);
+        player.setVelocityY(0);
+        player.setOnGround(false);
         gravity = new Gravity(1);
-        this.gamer = player.graph;
+        this.gamer = player.getGraph();
         mainPane.getChildren().add(gamer);
-        gamer.setLayoutX(player.positionX);
-        gamer.setLayoutY(player.positionY);
+        gamer.setLayoutX(player.getPositionX());
+        gamer.setLayoutY(player.getPositionY());
         mainStage.show();
         createSteps();
         gameLoop();
@@ -96,59 +83,54 @@ public class GameManager
             @Override
             public void handle(long l) {
                // if(player.positionY > 800) gameTimer.stop();
-                if(player.positionY < 400) startedGame = true;
+                if(player.getPositionY() < 400) startedGame = true;
                 if(startedGame) moveSteps();
                 else
                 {
-                    if(player.onGround == true) player.velocityY = -1;
+                    if(player.isOnGround() == true) player.setVelocityY(-1);
                 }
                 movePlayer();
 
-                if(player.positionY < 100)
+                if(player.getPositionY() < 100)
                 {
-                    player.positionY -=player.velocityY*1.1;
+                    player.setPositionY(player.getPositionY()-player.getVelocityY()*1.1);
                     for(int i = 0; i< steps.size(); i++)
                     {
-                        steps.get(i).positionY -=player.velocityY*1.1;
+                        steps.get(i).setPositionY(steps.get(i).getPositionY()-player.getVelocityY()*1.1);
                     }
 
                 }
 
-                /*if(player.positionY > 600)
-                {
-                    player.positionY -=5;
 
-                }*/
-
-                System.out.println("Player position X: " + player.positionX);
-                System.out.println("Player position Y: " + player.positionY);
+                System.out.println("Player position X: " + player.getPositionX());
+                System.out.println("Player position Y: " + player.getPositionY());
 
 
-                player.velocityY += gravity.getGravity();
-                if(player.velocityX > 0 && player.velocityX+a < 10 && a < 5) a+=1;
-                else if(player.velocityX < 0 && player.velocityX-a > -10 && a > -5) a+=-1;
-                else  a = 0;
-                player.velocityX += a;
-                if(player.positionX+player.velocityX <560 && player.positionX+player.velocityX > -0) player.positionX += player.velocityX;
-                player.positionY += player.velocityY;
+                player.setVelocityY(player.getVelocityY()+gravity.getGravity());
+                if(player.getVelocityX() > 0 && player.getVelocityX()+a < 10 && a < 5) a+=1;
+                else if(player.getVelocityX() < 0 && player.getVelocityX()-a > -10 && a > -5) a+=-1;
+                else a = 0;
+                player.setVelocityX(player.getVelocityX()+a);
+                if(player.getPositionX()+player.getVelocityX() <560 && player.getPositionX()+player.getVelocityX() > -0) player.setPositionX(player.getPositionX()+ player.getVelocityX());
+                player.setPositionY(player.getPositionY()+player.getVelocityY());
 
                 //checkHitBox();
-                checkShapeIntersection(player.graph);
-                if(player.onGround == true) player.fallingDown = false;
-                else player.fallingDown = true;
+                checkShapeIntersection(player.getGraph());
+                if(player.isOnGround() == true) player.setFallingDown(false);
+                else player.setFallingDown(true);
 
                 //if(isGravity == true) gravity.setGravity(1);
                // else gravity.setGravity(0);
-                if(player.velocityY > -2) player.fallingDown = true;
-                else player.fallingDown = false;
+                if(player.getVelocityY() > -2) player.setFallingDown(true);
+                else player.setFallingDown(false);
 
-                gamer.setLayoutX(player.positionX);
-                gamer.setLayoutY(player.positionY);
-                System.out.println("vel X: " + player.velocityX);
-                System.out.println("vel y: " + player.velocityY);
+                gamer.setLayoutX(player.getPositionX());
+                gamer.setLayoutY(player.getPositionY());
+                System.out.println("vel X: " + player.getVelocityX());
+                System.out.println("vel y: " + player.getVelocityY());
 
 
-                if(player.onGround == false)
+                if(player.isOnGround() == false)
                 {
                     //gamer.setRotate(rotateCombo);
                 }
@@ -165,31 +147,31 @@ public class GameManager
     {
         if(isLeftKeyPressed && !isRightKeyPressed)
         {
-            gamer.setRotate(angle);
-            if(player.positionX > - 20)
+            //gamer.setRotate(angle);
+            if(player.getPositionX() > - 20)
             {
-                player.velocityX = -5;
+                player.setVelocityX(-5);
             }
         }
         if(isRightKeyPressed && !isLeftKeyPressed)
         {
-            if(player.positionX < 560)
+            if(player.getPositionX() < 560)
             {
-                player.velocityX = 5;
+                player.setVelocityX(5);
             }
         }
         if(!isLeftKeyPressed && !isRightKeyPressed)
         {
-            player.velocityX = 0;
+            player.setVelocityX(0);
         }
 
         if(isSpaceBarPressed)
         {
-            if(player.onGround == true) {
-                if(player.velocityX > 0)player.velocityY = -16 + player.velocityX * (-1);
-                else if(player.velocityX < 0) player.velocityY = -16 + player.velocityX;
-                else player.velocityY = -16;
-                player.onGround = false;
+            if(player.isOnGround() == true) {
+                if(player.getVelocityX() > 0) player.setVelocityY(-16 + player.getVelocityX() * (-1));
+                else if(player.getVelocityX() < 0) player.setVelocityY(-16 + player.getVelocityX());
+                else player.setVelocityY(-16);
+                player.setOnGround(false);
             }
         }
         if(!isSpaceBarPressed)
@@ -198,9 +180,9 @@ public class GameManager
         }
         if(isSuperJump)
         {
-            if(player.onGround == true) {
-                player.velocityY = -100;
-                player.onGround = false;
+            if(player.isOnGround() == true) {
+                player.setVelocityY(-100);
+                player.setOnGround(false);
             }
         }
         if(!isSuperJump)
@@ -234,13 +216,13 @@ public class GameManager
                     size = 1000;
                 }
                 Step step = new Step(xPos, i * 150, size, nr, color);
-                step.positionY = step.positionY - (95+level*200) * 150;
-                step.stack.setLayoutY(step.positionY);
-                step.stack.setLayoutX(step.positionX);
+                step.setPositionY(step.getPositionY() - (95+level*200) * 150);
+                step.getStack().setLayoutY(step.getPositionY());
+                step.getStack().setLayoutX(step.getPositionX());
                 steps.add(step);
-                stepsShapes.add(new Rectangle(step.positionX, step.positionY, step.width, 15));
+                stepsShapes.add(new Rectangle(step.getPositionX(), step.getPositionY(), step.getWidth(), 15));
                 //mainPane.getChildren().add(stepsShapes.get(i));
-                mainPane.getChildren().add(step.stack);
+                mainPane.getChildren().add(step.getStack());
                 j--;
                 nr--;
                 numColor++;
@@ -255,9 +237,9 @@ public class GameManager
         for(int level = 0; level < 10; level++) {
             for (int i = level*100; i < 100+level*100; i++) {
                 //if(player.velocityY < 0)
-                steps.get(i).positionY += 5;
+                steps.get(i).setPositionY(steps.get(i).getPositionY()+5);
                 //else if(player.velocityY > 1) steps.get(i).positionY  -=1;
-                steps.get(i).stack.setLayoutY(steps.get(i).positionY);
+                steps.get(i).getStack().setLayoutY(steps.get(i).getPositionY());
             }
         }
         /*for(int i = 0; i<100; i++)
@@ -277,7 +259,7 @@ public class GameManager
         boolean collisionDetected = false;
         int index = 0;
         for (int i = 0; i<steps.size(); i++) {
-            Shape static_bloc = steps.get(i).shape;
+            Shape static_bloc = steps.get(i).getShape();
             if (static_bloc != block) {
                 //static_bloc.setFill(Color.GREEN);
                 Shape intersect = Shape.intersect(block, static_bloc);
@@ -289,15 +271,15 @@ public class GameManager
             }
         }
 
-        if (collisionDetected && player.fallingDown == true) {
+        if (collisionDetected && player.isFallingDown() == true) {
             //block.setFill(Color.BLUE);
-            player.velocityY = 4; // predkosc_schodkow - 1
-            player.fallingDown = false;
-            player.onGround = true;
-            score = steps.get(index).index;
+            player.setVelocityY(4); // predkosc_schodkow - 1
+            player.setFallingDown(false);
+            player.setOnGround(true);
+            score = steps.get(index).getIndex();
             displayScore();
         } else {
-            player.onGround = false;
+            player.setOnGround(false);
             //block.setFill(Color.GREEN);
         }
     }
@@ -316,8 +298,8 @@ public class GameManager
                 isSpaceBarPressed = true;
             }
             if (keyEvent.getCode() == KeyCode.A) {
-                player.positionY = 400;
-                player.velocityY = 0;
+                player.setPositionY(400);
+                player.setVelocityY(0);
             }
             if (keyEvent.getCode() == KeyCode.H) {
                     isSuperJump = true;
@@ -325,13 +307,13 @@ public class GameManager
             if (keyEvent.getCode() == KeyCode.S) {
                 for(int i = 0; i< steps.size(); i++)
                 {
-                    steps.get(i).positionY+=500;
+                    steps.get(i).setPositionY(steps.get(i).getPositionY()+500);
                 }
             }
             if (keyEvent.getCode() == KeyCode.D) {
                 for(int i = 0; i< steps.size(); i++)
                 {
-                    steps.get(i).positionY-=500;
+                    steps.get(i).setPositionY(steps.get(i).getPositionY()-500);
                 }
             }
         });
@@ -358,11 +340,6 @@ public class GameManager
         this.mainScene = new Scene(mainPane, WIDTH, HEIGHT);
         this.mainStage = new Stage();
         this.mainStage.setScene(mainScene);
-    }
-
-    public Stage getGameStage()
-    {
-        return mainStage;
     }
 
 }

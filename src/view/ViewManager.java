@@ -7,6 +7,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import model.*;
+import sample.GameManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +27,7 @@ public class ViewManager
     private OurSubScene scoreSubScene;
 
     private OurSubScene sceneToHide;
-    List<OurButton> menuButtons;
+    private List<OurButton> menuButtons;
 
 
     public ViewManager()
