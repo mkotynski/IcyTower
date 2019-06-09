@@ -16,20 +16,30 @@ public class Step {
     private Color color;
     private int index;
 
+    public Text getTextInStep() {
+        return textInStep;
+    }
+
+    public void setTextInStep(Text textInStep) {
+        this.textInStep = textInStep;
+    }
+
+    private Text textInStep;
+
     Step(double positionX, double positionY, double width, int i, Color color)
     {
         this.index = i;
         this.stack = new StackPane();
         this.color = color;
-        stack.setMinHeight(45);
-        Text text = new Text("-" + index + " - ");
-        text.setFill(Color.WHITE);
-        shape = new Rectangle(0,0,width,2);
+        stack.setMinHeight(32);
+        textInStep = new Text("-" + index + " - ");
+        textInStep.setFill(Color.WHITE);
+        shape = new Rectangle(0,0,width,8);
         shape.setFill(Color.rgb(200,200,200,0.5));
         rect = new Rectangle(0,0,width,20);
         rect.setFill(color);
-        stack.getChildren().addAll(rect, shape, text);
-        StackPane.setAlignment(text,Pos.BOTTOM_CENTER);
+        stack.getChildren().addAll(rect, shape, textInStep);
+        StackPane.setAlignment(textInStep,Pos.BOTTOM_CENTER);
         StackPane.setAlignment(shape, Pos.TOP_CENTER);
         StackPane.setAlignment(rect, Pos.BOTTOM_CENTER);
         this.positionX = positionX;
