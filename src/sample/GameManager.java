@@ -18,6 +18,7 @@ import javafx.util.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Timer;
 
 public class GameManager
 {
@@ -41,15 +42,30 @@ public class GameManager
     private boolean startedGame = false;
     private double a = 0;
     private StackPane scoreStack = new StackPane();
+    private StackPane infos = new StackPane();
     private Stage menuStage;
     private int score = 0;
+    private int fullScore = 0;
     private boolean changedLevels = false;
     private boolean changedLevel5 = false;
     private int upScore = 1;
 
+    private double stepsVelocity = 2;
 
     List<Step> steps = new ArrayList<>();
     List<Rectangle> stepsShapes = new ArrayList<>();
+
+    private GridPane gridPane1;
+    private GridPane gridPane2;
+    private static String BACKGROUND_IMAGE = "sample/brickWall.png";
+
+    private Text textScore;
+
+    private Text infoTextFaster;
+
+    private boolean isAddCombo;
+
+
 
     public GameManager()
     {
@@ -60,50 +76,95 @@ public class GameManager
     public void createNewGame(Stage menuStage) {
         this.menuStage = menuStage;
         this.menuStage.hide();
+        initializePlayer();
+        mainPane.getChildren().add(gamer);
+        gamer.setLayoutX(player.getPositionX());
+        gamer.setLayoutY(player.getPositionY());
+        mainStage.show();
+        mainPane.getChildren().add(player.getSprite());
+
+        createBackground();
+        createSteps();
+
+        initializeTextFields();
+
+        player.getSprite().toFront();
+        gameLoop();
+    }
+
+    private void initializeTextFields()
+    {
+        textScore = new Text("STEPS: " + score + "\nSCORE: " + fullScore);
+        Rectangle rect = new Rectangle(0,0,100,40);
+        rect.setFill(Color.GRAY);
+        scoreStack.getChildren().addAll(rect, textScore);
+        mainPane.getChildren().add(scoreStack);
+
+        infoTextFaster = new Text("FASTER!");
+        infoTextFaster.setStyle("-fx-font: 32 arial;");
+        infoTextFaster.setFill(Color.RED);
+        Rectangle rectx = new Rectangle(0,0,300,100);
+        rectx.setFill(Color.rgb(150,0,100,0));
+        infos.setLayoutX(100);
+        infos.setLayoutY(-100);
+        infos.getChildren().addAll(rectx, infoTextFaster);
+        mainPane.getChildren().add(infos);
+    }
+
+    /*
+    Inicjacja ustawienia gracza w grze
+     */
+    private void initializePlayer()
+    {
         player = new Player();
         player.setPositionX(250);
         player.setPositionY(613);
         player.setVelocityX(0);
         player.setVelocityY(0);
         player.setOnGround(false);
-        gravity = new Gravity(1);
+        gravity = new Gravity(1   );
         this.gamer = player.getGraph();
-        mainPane.getChildren().add(gamer);
-        gamer.setLayoutX(player.getPositionX());
-        gamer.setLayoutY(player.getPositionY());
-        mainStage.show();
-
-        mainPane.getChildren().add(player.getSprite());
-
-        createSteps();
-        gameLoop();
     }
 
+    /*
+    Procedura wyswietlajaca wynik gracza w lewym gornym prostokącie
+     */
     private void displayScore()
     {
-        mainPane.getChildren().remove(scoreStack);
-        Text text = new Text("SCORE: " + score);
-        Rectangle rect = new Rectangle(0,0,100,20);
-        rect.setFill(Color.GRAY);
-        scoreStack.getChildren().addAll(rect, text);
-        mainPane.getChildren().add(scoreStack);
+        textScore.setText("STEPS: " + score + "\nSCORE: " + fullScore);
     }
 
+    /*
+    Procedura kontrolujaca koniec gry
+     */
     private void isGameOver()
     {
+        //jezeli pozycja gracza na mapie jest > 800px czyli jest poza oknem wyswietlania to koniec gry
         if(player.getPositionY() > 800) gameTimer.stop();
     }
 
+    /*
+    Procedura ruszajaca schodkami w momencie wystartowania gry
+     */
     private void startMovingSteps()
     {
+        //Uznaje sie, ze gra wystartowala jak gracz znalazl sie ponad 400px okna gry (czyli jego pozycja Y jest mniejsza niz 400px) ( u gory 0 na dole 750)
         if(player.getPositionY() < 400) startedGame = true;
-        if(startedGame) moveSteps();
+        if(startedGame)
+        {
+            moveSteps(); // startujemy jezeli flaga ustawiona na true
+            moveBackground();
+        }
         else
         {
             if(player.isOnGround() == true) player.setVelocityY(-1);
+            //jezeli gra nie wystartowala musimy dzialac naprzeciw grawitacji aby gracz nie spadl se schodka startowego
         }
     }
 
+    /*
+    Procedura poruszajaca `kamera' do gory jezeli gracz znajduje sie przy gornym krancu ekranu
+     */
     private void moveCameraUp()
     {
         if(player.getPositionY() < 100)
@@ -112,11 +173,20 @@ public class GameManager
             for(int i = 0; i< steps.size(); i++)
             {
                 steps.get(i).setPositionY(steps.get(i).getPositionY()-player.getVelocityY()*1.1);
+                if(!isAddCombo)
+                {
+                    fullScore+=1;
+                    isAddCombo = true;
+                }
             }
 
         }
+        else isAddCombo = false;
     }
 
+    /*
+    Funkcja animujaca wszystkie zachowania gracza
+     */
     private void animatePlayer()
     {
         //ustawienie predkosci pionowej gracza (uzalezniona od dzialajacej grawitacji)
@@ -162,22 +232,25 @@ public class GameManager
         else if(player.getPositionX() > 0 && player.getPositionX() < 5) player.setVelocityX(player.getVelocityX()*(-1) +5);*/
 
 
+        /*
+        Obsluge sprite'ow gracza (do uproszczenia)
+         */
         if(player.isOnGround()) {
-            if(player.getVelocityX() > 0) {
+            if(player.getVelocityX() > 0) { // rucj w prawo sprite chodzenia w prawo
                 player.animation.setColumns(3);
                 player.animation.setCount(3);
                 player.animation.setOffsetY(55);
                 player.animation.setOffsetX(0);
-                player.animation.play();
+               // player.animation.play();
             }
-            else if(player.getVelocityX() < 0) {
+            else if(player.getVelocityX() < 0) { // ruch w lewo sprite chodzenia w lewo
                 player.animation.setColumns(3);
                 player.animation.setCount(3);
                 player.animation.setOffsetY(111);
                 player.animation.setOffsetX(0);
-                player.animation.play();
+                //player.animation.play();
             }
-            else {
+            else { //jezeli na schodku to ustawiamy sprite wyswietlajacego spirte stojacego na ziemi
                 player.animation.setOffsetY(0);
                 player.animation.setOffsetX(0);
                 player.animation.setColumns(3);
@@ -185,93 +258,95 @@ public class GameManager
                 player.animation.play();
             }
         }
-        else if(player.getVelocityY() != 0 && player.getVelocityX() == 0)
+        else if(player.getVelocityY() != 0 && player.getVelocityX() == 0) // sprite skakania pionowego
         {
             player.animation.setOffsetY(167);
             player.animation.setOffsetX(58);
             player.animation.setColumns(1);
             player.animation.setCount(1);
-            player.animation.play();
+          //  player.animation.play();
         }
-        else if(player.getVelocityY() != 0 && player.getVelocityX() != 0)
+        else if(player.getVelocityY() != 0 && player.getVelocityX() != 0) // sprite skakania w raz z ruchem poziomym
         {
             player.animation.setOffsetY(167);
             player.animation.setOffsetX(8);
             player.animation.setColumns(1);
             player.animation.setCount(1);
-            player.animation.play();
+           // player.animation.play();
         }
         else
-        {
-            player.animation.setOffsetY(0);
-            player.animation.setOffsetX(0);
-            player.animation.setColumns(3);
-            player.animation.setCount(3);
-            player.animation.play();
+        { // jezeli nie spelniono powyzszych to po prostu sprite stania na schodku
+            player.animation.stop();
         }
 
+        /*
+        poruszanie spritem (obiektem gracza) po ekranie
+         */
         player.getSprite().setLayoutY(player.getPositionY()-30);
         player.getSprite().setLayoutX(player.getPositionX());
     }
 
+    /*
+    Petla gry tutaj sie dzieje magia uruchamiane jest wiekszosc procedur :)
+     */
     private void gameLoop() {
+
         gameTimer = new AnimationTimer() {
             @Override
             public void handle(long l) {
-                //isGameOver();
+               // isGameOver();
                 startMovingSteps();
+                changeStepsVelocity();
                 movePlayer();
-                moveCameraUp();
-
-                //System.out.println("Player position X: " + player.getPositionX());
-                //System.out.println("Player position Y: " + player.getPositionY());
+              //  moveCameraUp();
 
                 animatePlayer();
                 checkShapeIntersection(player.getGraph());
 
-               //System.out.println("Velocity X: " + player.getVelocityX());
-                //System.out.println("Velocity y: " + player.getVelocityY());
                 moveUpStepsAndReIndex();
             }
         };
         gameTimer.start();
     }
 
+    /*
+    Procedura sprawdzajaca czy sa wcisniete klawisze jezeli tak to odpowiednie dzialanie
+     */
     private void movePlayer()
     {
-        if(isLeftKeyPressed && !isRightKeyPressed)
+        if(isLeftKeyPressed && !isRightKeyPressed) // jezeli flaga wcisnietego lewego jest true i flaga prawego jest false (czyli nie wcisniety) to w lewo
         {
-            if(player.getPositionX() > - 20)
+            if(player.getPositionX() > - 20) // zeby nie wypadl poza ekran
             {
-                player.setVelocityX(-8);
+                player.setVelocityX(-8); // predkosc gracza -8 bo w lewo sie porusza
             }
         }
-        if(isRightKeyPressed && !isLeftKeyPressed)
+        if(isRightKeyPressed && !isLeftKeyPressed) // jak wyzej (ale w prawo
         {
-            if(player.getPositionX() < 560)
+            if(player.getPositionX() < 560) // zeby nie wypadl poza ekran
             {
-                player.setVelocityX(8);
+                player.setVelocityX(8); // predkosc gracza 8 bo w prawo sie porusza
             }
         }
-        if(!isLeftKeyPressed && !isRightKeyPressed)
+        if(!isLeftKeyPressed && !isRightKeyPressed) // jezeli zaden nie wcisniety to stoi w miejscu
         {
-            player.setVelocityX(0);
+            player.setVelocityX(0); // predkosc pozioma 0
         }
 
-        if(isSpaceBarPressed)
+        if(isSpaceBarPressed) // jezeli wcisnieto spacje to skok w gore
         {
             if(player.isOnGround() == true) {
-                if(player.getVelocityX() > 0) player.setVelocityY(-16 + player.getVelocityX() * (-0.75));
-                else if(player.getVelocityX() < 0) player.setVelocityY(-16 + player.getVelocityX()*0.75);
-                else player.setVelocityY(-18);
-                player.setOnGround(false);
+                if(player.getVelocityX() > 0) player.setVelocityY(-16 + player.getVelocityX() * (-0.75)); // bonusy za predkosc pozioma
+                else if(player.getVelocityX() < 0) player.setVelocityY(-16 + player.getVelocityX()*0.75); // bonusy za predkosc pozioma
+                else player.setVelocityY(-18); // skok w pionie bez prekosci poziomen (slabszy niz bez predkosci poziomej)
+                player.setOnGround(false); // ustawiamy flage ze graczc nie stoi na schodku (nie jest na ziemii)
             }
         }
         if(!isSpaceBarPressed)
         {
-
+            // nic nie rob jak spacja nei wcisnieta
         }
-        if(isSuperJump)
+        if(isSuperJump) // super skok dla testow :)
         {
             if(player.isOnGround() == true) {
                 player.setVelocityY(-100);
@@ -284,22 +359,13 @@ public class GameManager
         }
     }
 
-    private Color setStepsColor(int numColor)
-    {
-        Color color = Color.RED;
-        if(numColor == 0) color = Color.RED;
-        else if(numColor == 1) color = Color.BLUE;
-        else if(numColor == 2) color = Color.GREEN;
-        else if(numColor == 3) color = Color.PURPLE;
-        else if(numColor == 4) color = Color.DARKORANGE;
-        return color;
-    }
 
+    /*
+    Procedura umozliwiajaca przesuwanie schodkow ktore juz gracz minal tak aby nie bylo konieczne generowanie nowych
+     */
     private void moveUpStepsAndReIndex()
     {
-
-        System.out.println(score);
-        System.out.println("-- " + upScore);
+        /* przesuwanie pierwszych 400 schodkow */
         if(upScore > 1 && 600*(upScore-1)-((upScore-2)*100) > score && score > 500*(upScore-1) && changedLevel5 == false)
         {
             System.out.println("Przeniesiono");
@@ -312,6 +378,7 @@ public class GameManager
             changedLevel5 = true;
         }
         if(score > 600*(upScore-1)) changedLevel5 = false;
+        /* przesuwanie 400-500 */
         if(500*upScore > score && score > 400*upScore+((upScore-1)*100) && changedLevels == false)
         {
             System.out.println("ZMIENIONO" + upScore );
@@ -330,11 +397,30 @@ public class GameManager
         {
             changedLevels = false;
         }
-        System.out.println(changedLevel5);
 
     }
 
+    private void changeStepsVelocity()
+    {
+        int s = score/100;
+        if(s+2 > stepsVelocity)
+        {
+            stepsVelocity = s+2;
+            infos.setLayoutY(300);
+        }
+        else
+        {
+            if(infos.getLayoutY() > -100) infos.setLayoutY(infos.getLayoutY()-2);
+        }
+    }
 
+    /*
+Procedura ustawiania kolorow schodkow (do zmiany na grafike)
+ */
+
+    /*
+    Procedura tworzaca schodki
+     */
     private void createSteps()
     {
         Random rand = new Random();
@@ -348,12 +434,13 @@ public class GameManager
             nr = 100*(level+1);
             for (int i = 0+level*100; i <= 100+level*100; i++) {
                 size = (double) rand.nextInt(100) + 150;
-                xPos = (double) rand.nextInt(500) + 1;
+                xPos = (double) rand.nextInt(600-(int)size) + 1;
                 if (j == 0) {
                     xPos = 0;
-                    size = 1000;
+                    size = 600;
                 }
-                Step step = new Step(xPos, i * 150, size, nr, setStepsColor(numColor));
+                Step step = new Step(xPos, i * 150, size, nr);
+                step.changeBackgroundImage(numColor);
                 step.setPositionY(step.getPositionY() - (95+level*200) * 150);
                 step.getStack().setLayoutY(step.getPositionY());
                 step.getStack().setLayoutX(step.getPositionX());
@@ -369,21 +456,27 @@ public class GameManager
 
     }
 
+    /*
+    Poruszanie schodkami w ramach gry (schodki `ida` w dol)
+     */
     private void moveSteps()
     {
         for(int level = 0; level < 10; level++) {
             for (int i = level*100; i < 100+level*100; i++) {
-                steps.get(i).setPositionY(steps.get(i).getPositionY()+2);
+                steps.get(i).setPositionY(steps.get(i).getPositionY()+stepsVelocity); // 2 to predkosc schodkow
                 steps.get(i).getStack().setLayoutY(steps.get(i).getPositionY());
             }
         }
     }
 
 
+    /*
+    Procedura sprawdzajaca kolizje miedzy schodkami a graczem
+     */
     private void checkShapeIntersection(Shape block) {
         boolean collisionDetected = false;
         int index = 0;
-        for (int i = 0; i<500; i++) {
+        for (int i = 0; i<505; i++) {
             Shape static_bloc = steps.get(i).getShape();
             if (static_bloc != block) {
                 Shape intersect = Shape.intersect(block, static_bloc);
@@ -395,12 +488,20 @@ public class GameManager
             }
         }
 
+        int combo = 0;
         if (collisionDetected && player.isFallingDown() == true) {
-            player.setVelocityY(1); // predkosc_schodkow
+            player.setVelocityY(stepsVelocity-1); // predkosc_schodkow - 1 ( do zautomatyzowania )
             player.setFallingDown(false);
             player.setOnGround(true);
-            if(steps.get(index).getIndex() > score) score = steps.get(index).getIndex();
-            displayScore();
+            /* TUTAJ ZAGNIEZDZONE JEST ZAPISYWANIE SCORE'U */
+            if(steps.get(index).getIndex() > score)
+            {
+                combo = steps.get(index).getIndex() - score;
+                combo *=combo;
+                fullScore +=combo;
+                score = steps.get(index).getIndex();
+            }
+            displayScore(); // wyswietlanie wyniku w momencie zmiany na nowy
         } else {
             player.setOnGround(false);
         }
@@ -408,6 +509,10 @@ public class GameManager
 
 
 
+    /*
+    Procedura nasluchujaca wcisniete klawisze
+    Na podstawie wcisnietych klawiszy ustawia flagi wcisnietych klawiszy ;)
+     */
     private void createKeyListeners() {
         mainScene.setOnKeyPressed(keyEvent -> {
             if (keyEvent.getCode() == KeyCode.LEFT) {
@@ -426,13 +531,13 @@ public class GameManager
             if (keyEvent.getCode() == KeyCode.H) {
                     isSuperJump = true;
             }
-            if (keyEvent.getCode() == KeyCode.S) {
+            if (keyEvent.getCode() == KeyCode.S) { // boosty ( do testow )
                 for(int i = 0; i< steps.size(); i++)
                 {
                     steps.get(i).setPositionY(steps.get(i).getPositionY()+500);
                 }
             }
-            if (keyEvent.getCode() == KeyCode.D) {
+            if (keyEvent.getCode() == KeyCode.D) { // boosty ( do testow )
                 for(int i = 0; i< steps.size(); i++)
                 {
                     steps.get(i).setPositionY(steps.get(i).getPositionY()-500);
@@ -456,6 +561,9 @@ public class GameManager
         });
     }
 
+    /*
+    Procedura inicjalizujaca scene grys
+     */
     private void initializeStage()
     {
         this.mainPane = new AnchorPane();
@@ -464,4 +572,31 @@ public class GameManager
         this.mainStage.setScene(mainScene);
     }
 
+
+    private void createBackground()
+    {
+        gridPane1 = new GridPane();
+        gridPane2 = new GridPane();
+
+        for(int i = 0; i<12; i++)
+        {
+            ImageView backgroundImage1 = new ImageView(BACKGROUND_IMAGE);
+            ImageView backgroundImage2 = new ImageView(BACKGROUND_IMAGE);
+            GridPane.setConstraints(backgroundImage1,i%3,i/3);
+            GridPane.setConstraints(backgroundImage2,i%3,i/3);
+            gridPane1.getChildren().add(backgroundImage1);
+            gridPane2.getChildren().add(backgroundImage2);
+        }
+        gridPane2.setLayoutY(-1024);
+        mainPane.getChildren().addAll(gridPane1,gridPane2);
+    }
+
+    private void moveBackground()
+    {
+        gridPane2.setLayoutY(gridPane2.getLayoutY() + 0.5);
+        gridPane1.setLayoutY(gridPane1.getLayoutY() + 0.5);
+
+        if(gridPane1.getLayoutY() >= 1024) gridPane1.setLayoutY(-1024);
+        if(gridPane2.getLayoutY() >= 1024) gridPane2.setLayoutY(-1024);
+    }
 }
