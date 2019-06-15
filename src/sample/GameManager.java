@@ -415,7 +415,7 @@ public class GameManager
     }
 
     /*
-Procedura ustawiania kolorow schodkow (do zmiany na grafike)
+Procedura ustawiania kolorow schodkow (do zmiany na grafike)cc
  */
 
     /*
