@@ -15,6 +15,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -22,6 +23,9 @@ import java.util.Timer;
 
 public class GameManager
 {
+
+    PrintWriter writer;
+
     private static final int HEIGHT = 800;
     private static final int WIDTH = 600;
     private AnchorPane mainPane;
@@ -69,6 +73,7 @@ public class GameManager
 
     public GameManager()
     {
+
         initializeStage();
         createKeyListeners();
     }
@@ -140,7 +145,24 @@ public class GameManager
     private void isGameOver()
     {
         //jezeli pozycja gracza na mapie jest > 800px czyli jest poza oknem wyswietlania to koniec gry
-        if(player.getPositionY() > 800) gameTimer.stop();
+        if(player.getPositionY() > 800) {
+
+            gameTimer.stop();
+
+            try {
+                FileReader fileReader = new FileReader("test.txt");
+
+                File plik = new File("score.txt");
+                FileReader fileReader2 = new FileReader(plik);
+            }
+            catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+
+
+        }
+
+
     }
 
     /*
@@ -228,6 +250,8 @@ public class GameManager
         gamer.setLayoutY(player.getPositionY());
 
 
+        if(player.getPositionX() > 0 && player.getPositionX() < 10) player.setVelocityX(30);
+        if(player.getPositionX() > 550 && player.getPositionX() < 560) player.setVelocityX(-30);
         /*if(player.getPositionX() > 555 && player.getPositionX() < 560) player.setVelocityX(player.getVelocityX()*(-1) -5);
         else if(player.getPositionX() > 0 && player.getPositionX() < 5) player.setVelocityX(player.getVelocityX()*(-1) +5);*/
 
@@ -282,6 +306,7 @@ public class GameManager
         /*
         poruszanie spritem (obiektem gracza) po ekranie
          */
+
         player.getSprite().setLayoutY(player.getPositionY()-30);
         player.getSprite().setLayoutX(player.getPositionX());
     }
@@ -294,11 +319,11 @@ public class GameManager
         gameTimer = new AnimationTimer() {
             @Override
             public void handle(long l) {
-               // isGameOver();
+                isGameOver();
                 startMovingSteps();
                 changeStepsVelocity();
                 movePlayer();
-              //  moveCameraUp();
+               moveCameraUp();
 
                 animatePlayer();
                 checkShapeIntersection(player.getGraph());
@@ -307,6 +332,7 @@ public class GameManager
             }
         };
         gameTimer.start();
+
     }
 
     /*

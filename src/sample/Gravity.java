@@ -3,7 +3,6 @@ package sample;
 public class Gravity
 {
     private double val;
-
     Gravity(double val)
     {
         this.val = val;
