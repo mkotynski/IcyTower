@@ -1,4 +1,4 @@
-package sample;
+package game;
 
 import javafx.animation.Animation;
 import javafx.geometry.Rectangle2D;
@@ -17,7 +17,7 @@ public class Player {
     volatile private boolean fallingDown;
 
 
-    private Image IMAGE = new Image("sample/sprites.png");
+    private Image IMAGE = new Image("game/sprites.png");
 
     private static final int COLUMNS  =   3;
     private static final int COUNT    =  3;

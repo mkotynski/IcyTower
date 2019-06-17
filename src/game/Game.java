@@ -1,10 +1,9 @@
-package sample;
 
-import javafx.animation.Animation;
+
+package game;
+
 import javafx.animation.AnimationTimer;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
@@ -13,15 +12,11 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.Timer;
+import java.util.*;
 
-public class GameManager
+public class Game
 {
 
     PrintWriter writer;
@@ -61,7 +56,7 @@ public class GameManager
 
     private GridPane gridPane1;
     private GridPane gridPane2;
-    private static String BACKGROUND_IMAGE = "sample/brickWall.png";
+    private static String BACKGROUND_IMAGE = "game/brickWall.png";
 
     private Text textScore;
 
@@ -71,7 +66,7 @@ public class GameManager
 
 
 
-    public GameManager()
+    public Game()
     {
 
         initializeStage();
@@ -142,22 +137,74 @@ public class GameManager
     /*
     Procedura kontrolujaca koniec gry
      */
-    private void isGameOver()
-    {
+
+
+    private static void b_sort(int tab[]){
+        int temp;
+        int zmiana = 1;
+        while(zmiana > 0){
+            zmiana = 0;
+            for(int i=0; i<tab.length-1; i++){
+                if(tab[i]>tab[i+1]){
+                    temp = tab[i+1];
+                    tab[i+1] = tab[i];
+                    tab[i] = temp;
+                    zmiana++;
+                }
+            }
+        }
+
+    }
+
+    private static void odwroc(int[] wejscie) {
+
+        // indeks pierwszego elementu
+        int poczatek  = 0;
+        // indeks ostatniego elementu
+        int koniec = wejscie.length-1;
+
+        // dopóki indeks początkowy jest mniejszy od indeksu końcowego
+        while (poczatek < koniec) {
+            // zamieniamy elementy
+            int pomoc = wejscie[poczatek];
+            wejscie[poczatek]  = wejscie[koniec];
+            wejscie[koniec] = pomoc;
+
+            // przesuwamy się w kierunku środka wektora zwiększając i zmniejszając odpowiednio indeksy
+            poczatek++;
+            koniec--;
+        }
+    }
+
+
+
+
+
+    private void isGameOver() throws FileNotFoundException {
         //jezeli pozycja gracza na mapie jest > 800px czyli jest poza oknem wyswietlania to koniec gry
         if(player.getPositionY() > 800) {
 
             gameTimer.stop();
 
-            try {
-                FileReader fileReader = new FileReader("test.txt");
+            File file = new File("src/sample/score.txt");
+            Scanner in = new Scanner(file);
+            int wynik[] = new int[6];
+            for (int i=0;i<5;i++)
+            {
+                wynik[i]= Integer.parseInt(in.nextLine());
+            }
+            wynik[5]=fullScore;
+            b_sort(wynik);
+            odwroc(wynik);
 
-                File plik = new File("score.txt");
-                FileReader fileReader2 = new FileReader(plik);
+
+            PrintWriter zapis = new PrintWriter("src/sample/score.txt");
+            for (int i=0;i<5;i++)
+            {
+                zapis.println(wynik[i]);
             }
-            catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
+
+            zapis.close();
 
 
         }
@@ -250,22 +297,20 @@ public class GameManager
         gamer.setLayoutY(player.getPositionY());
 
 
-        if(player.getPositionX() > 0 && player.getPositionX() < 10) player.setVelocityX(30);
-        if(player.getPositionX() > 550 && player.getPositionX() < 560) player.setVelocityX(-30);
-        /*if(player.getPositionX() > 555 && player.getPositionX() < 560) player.setVelocityX(player.getVelocityX()*(-1) -5);
-        else if(player.getPositionX() > 0 && player.getPositionX() < 5) player.setVelocityX(player.getVelocityX()*(-1) +5);*/
+        if(player.getPositionX() > 0 && player.getPositionX() < 10) player.setVelocityX(20);
+        if(player.getPositionX() > 550 && player.getPositionX() < 560) player.setVelocityX(-20);
 
 
         /*
         Obsluge sprite'ow gracza (do uproszczenia)
          */
         if(player.isOnGround()) {
-            if(player.getVelocityX() > 0) { // rucj w prawo sprite chodzenia w prawo
+            if(player.getVelocityX() > 0) { // ruch w prawo sprite chodzenia w prawo
                 player.animation.setColumns(3);
                 player.animation.setCount(3);
                 player.animation.setOffsetY(55);
                 player.animation.setOffsetX(0);
-               // player.animation.play();
+                // player.animation.play();
             }
             else if(player.getVelocityX() < 0) { // ruch w lewo sprite chodzenia w lewo
                 player.animation.setColumns(3);
@@ -288,7 +333,7 @@ public class GameManager
             player.animation.setOffsetX(58);
             player.animation.setColumns(1);
             player.animation.setCount(1);
-          //  player.animation.play();
+            //  player.animation.play();
         }
         else if(player.getVelocityY() != 0 && player.getVelocityX() != 0) // sprite skakania w raz z ruchem poziomym
         {
@@ -296,7 +341,7 @@ public class GameManager
             player.animation.setOffsetX(8);
             player.animation.setColumns(1);
             player.animation.setCount(1);
-           // player.animation.play();
+            // player.animation.play();
         }
         else
         { // jezeli nie spelniono powyzszych to po prostu sprite stania na schodku
@@ -319,11 +364,15 @@ public class GameManager
         gameTimer = new AnimationTimer() {
             @Override
             public void handle(long l) {
-                isGameOver();
+             /*   try {
+                    isGameOver();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }*/
                 startMovingSteps();
                 changeStepsVelocity();
                 movePlayer();
-               moveCameraUp();
+                moveCameraUp();
 
                 animatePlayer();
                 checkShapeIntersection(player.getGraph());
@@ -555,7 +604,7 @@ Procedura ustawiania kolorow schodkow (do zmiany na grafike)cc
                 player.setVelocityY(0);
             }
             if (keyEvent.getCode() == KeyCode.H) {
-                    isSuperJump = true;
+                isSuperJump = true;
             }
             if (keyEvent.getCode() == KeyCode.S) { // boosty ( do testow )
                 for(int i = 0; i< steps.size(); i++)
@@ -625,4 +674,6 @@ Procedura ustawiania kolorow schodkow (do zmiany na grafike)cc
         if(gridPane1.getLayoutY() >= 1024) gridPane1.setLayoutY(-1024);
         if(gridPane2.getLayoutY() >= 1024) gridPane2.setLayoutY(-1024);
     }
+
 }
+

@@ -1,4 +1,4 @@
-package model;
+package start;
 
 import javafx.animation.TranslateTransition;
 import javafx.scene.SubScene;
@@ -8,8 +8,8 @@ import javafx.util.Duration;
 
 public class OurSubScene extends SubScene
 {
-    private final static String FONT_PATH = "model/resources/HALO____.TTF";
-    private final static String BACKGROUND_IMAGE = "/model/resources/button.png";
+    private final static String FONT_PATH = "start/resources/HALO____.TTF";
+    private final static String BACKGROUND_IMAGE = "/start/images/button.png";
 
     private boolean isHidden;
 

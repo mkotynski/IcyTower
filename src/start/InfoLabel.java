@@ -1,4 +1,4 @@
-package model;
+package start;
 
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
@@ -9,7 +9,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 public class InfoLabel extends Label {
-    public final static String FONT_PATH = "model/resources/HALO____.TTF";
+    public final static String FONT_PATH = "start/resources/HALO____.TTF";
 
 
     public InfoLabel(String text)

@@ -1,4 +1,4 @@
-package view;
+package start;
 
 import javafx.scene.Scene;
 import javafx.scene.effect.DropShadow;
@@ -6,8 +6,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
-import model.*;
-import sample.GameManager;
+import game.Game;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -91,7 +90,7 @@ public class ViewManager
 
         startButton.setOnAction(ActionEvent->
         {
-            GameManager gameManager = new GameManager();
+            Game gameManager = new Game();
             gameManager.createNewGame(mainStage);
         });
     }
@@ -131,14 +130,14 @@ public class ViewManager
 
     private void createBackground()
     {
-        BackgroundImage backgroundImage = new BackgroundImage( new Image( getClass().getResource("/view/resources/back2.png").toExternalForm(),256,256,false,false), BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT);
+        BackgroundImage backgroundImage = new BackgroundImage( new Image( getClass().getResource("/start/images/back2.png").toExternalForm(),256,256,false,false), BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT);
         Background background = new Background(backgroundImage);
         mainPane.setBackground(background);
     }
 
     private void createLogo()
     {
-        ImageView logo = new ImageView( new Image( getClass().getResource("/view/resources/logo.png").toExternalForm(),400,200,false,false));
+        ImageView logo = new ImageView( new Image( getClass().getResource("/start/images/logo.png").toExternalForm(),400,200,false,false));
         logo.setLayoutX(350);
         logo.setLayoutY(50);
 

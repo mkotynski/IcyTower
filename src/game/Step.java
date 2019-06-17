@@ -1,4 +1,4 @@
-package sample;
+package game;
 
 import javafx.geometry.Pos;
 import javafx.scene.image.Image;
@@ -20,24 +20,24 @@ public class Step {
     private StackPane stack;
     private Color color;
     private int index;
-    private Image stepLeft = new Image("sample/step1l.png");
-    private Image stepRight = new Image("sample/step1r.png");
-    private Image stepLeftBlue = new Image("sample/step1lBLUE.png");
-    private Image stepRightBlue = new Image("sample/step1rBLUE.png");
-    private Image stepLeftGreen = new Image("sample/step1lGREEN.png");
-    private Image stepRightGreen = new Image("sample/step1rGREEN.png");
-    private Image stepLeftRed = new Image("sample/step1lRED.png");
-    private Image stepRightRed = new Image("sample/step1rRED.png");
-    private Image stepLeftYellow = new Image("sample/step1lYELLOW.png");
-    private Image stepRightYellow = new Image("sample/step1rYELLOW.png");
+    private Image stepLeft = new Image(getClass().getResource("/game/images/step1l.png").toExternalForm());
+    private Image stepRight = new Image(getClass().getResource("/game/images/step1r.png").toExternalForm());
+    private Image stepLeftBlue = new Image(getClass().getResource("/game/images/step1lBLUE.png").toExternalForm());
+    private Image stepRightBlue = new Image(getClass().getResource("/game/images/step1rBLUE.png").toExternalForm());
+    private Image stepLeftGreen = new Image(getClass().getResource("/game/images/step1lGREEN.png").toExternalForm());
+    private Image stepRightGreen = new Image(getClass().getResource("/game/images/step1rGREEN.png").toExternalForm());
+    private Image stepLeftRed = new Image(getClass().getResource("/game/images/step1lRED.png").toExternalForm());
+    private Image stepRightRed = new Image(getClass().getResource("/game/images/step1rRED.png").toExternalForm());
+    private Image stepLeftYellow = new Image(getClass().getResource("/game/images/step1lYELLOW.png").toExternalForm());
+    private Image stepRightYellow = new Image(getClass().getResource("/game/images/step1rYELLOW.png").toExternalForm());
     private ImageView sLeft;
     private ImageView sRight;
 
-    private BackgroundImage backgroundImage = new BackgroundImage( new Image( getClass().getResource("/sample/step1body.png").toExternalForm(),100,25,false,false), BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, new BackgroundPosition(LEFT,0,false, BOTTOM,0,false), BackgroundSize.DEFAULT);
-    private BackgroundImage backgroundImageBlue = new BackgroundImage( new Image( getClass().getResource("/sample/step1bodyBLUE.png").toExternalForm(),100,25,false,false), BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, new BackgroundPosition(LEFT,0,false, BOTTOM,0,false), BackgroundSize.DEFAULT);
-    private BackgroundImage backgroundImageGreen = new BackgroundImage( new Image( getClass().getResource("/sample/step1bodyGreen.png").toExternalForm(),100,25,false,false), BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, new BackgroundPosition(LEFT,0,false, BOTTOM,0,false), BackgroundSize.DEFAULT);
-    private BackgroundImage backgroundImageRed = new BackgroundImage( new Image( getClass().getResource("/sample/step1bodyRed.png").toExternalForm(),100,25,false,false), BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, new BackgroundPosition(LEFT,0,false, BOTTOM,0,false), BackgroundSize.DEFAULT);
-    private BackgroundImage backgroundImageYellow = new BackgroundImage( new Image( getClass().getResource("/sample/step1bodyYellow.png").toExternalForm(),100,25,false,false), BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, new BackgroundPosition(LEFT,0,false, BOTTOM,0,false), BackgroundSize.DEFAULT);
+    private BackgroundImage backgroundImage = new BackgroundImage( new Image( getClass().getResource("/game/images/step1body.png").toExternalForm(),100,25,false,false), BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, new BackgroundPosition(LEFT,0,false, BOTTOM,0,false), BackgroundSize.DEFAULT);
+    private BackgroundImage backgroundImageBlue = new BackgroundImage( new Image( getClass().getResource("/game/images/step1bodyBLUE.png").toExternalForm(),100,25,false,false), BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, new BackgroundPosition(LEFT,0,false, BOTTOM,0,false), BackgroundSize.DEFAULT);
+    private BackgroundImage backgroundImageGreen = new BackgroundImage( new Image( getClass().getResource("/game/images/step1bodyGreen.png").toExternalForm(),100,25,false,false), BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, new BackgroundPosition(LEFT,0,false, BOTTOM,0,false), BackgroundSize.DEFAULT);
+    private BackgroundImage backgroundImageRed = new BackgroundImage( new Image( getClass().getResource("/game/images/step1bodyRed.png").toExternalForm(),100,25,false,false), BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, new BackgroundPosition(LEFT,0,false, BOTTOM,0,false), BackgroundSize.DEFAULT);
+    private BackgroundImage backgroundImageYellow = new BackgroundImage( new Image( getClass().getResource("/game/images/step1bodyYellow.png").toExternalForm(),100,25,false,false), BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, new BackgroundPosition(LEFT,0,false, BOTTOM,0,false), BackgroundSize.DEFAULT);
 
 
 
