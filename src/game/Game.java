@@ -3,7 +3,12 @@
 package game;
 
 import javafx.animation.AnimationTimer;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
@@ -18,8 +23,6 @@ import java.util.*;
 
 public class Game
 {
-
-    PrintWriter writer;
 
     private static final int HEIGHT = 800;
     private static final int WIDTH = 600;
@@ -42,6 +45,7 @@ public class Game
     private double a = 0;
     private StackPane scoreStack = new StackPane();
     private StackPane infos = new StackPane();
+    private HBox saveScoreHBox = new HBox();
     private Stage menuStage;
     private int score = 0;
     private int fullScore = 0;
@@ -51,26 +55,36 @@ public class Game
 
     private double stepsVelocity = 2;
 
-    List<Step> steps = new ArrayList<>();
-    List<Rectangle> stepsShapes = new ArrayList<>();
+    private List<Step> steps = new ArrayList<>();
+    private List<Rectangle> stepsShapes = new ArrayList<>();
 
     private GridPane gridPane1;
     private GridPane gridPane2;
     private static String BACKGROUND_IMAGE = "game/brickWall.png";
 
     private Text textScore;
-
     private Text infoTextFaster;
 
     private boolean isAddCombo;
 
-
+    private Score [] scores = new Score [6];
+    private String playerNickName = "john";
 
     public Game()
     {
-
         initializeStage();
         createKeyListeners();
+    }
+
+    /*
+Procedura inicjalizujaca scene gry
+ */
+    private void initializeStage()
+    {
+        this.mainPane = new AnchorPane();
+        this.mainScene = new Scene(mainPane, WIDTH, HEIGHT);
+        this.mainStage = new Stage();
+        this.mainStage.setScene(mainScene);
     }
 
     public void createNewGame(Stage menuStage) {
@@ -88,6 +102,8 @@ public class Game
 
         initializeTextFields();
 
+        for(int i = 0; i<6;i++) scores[i] = new Score("NoOne",0);
+
         player.getSprite().toFront();
         gameLoop();
     }
@@ -96,21 +112,85 @@ public class Game
     {
         textScore = new Text("STEPS: " + score + "\nSCORE: " + fullScore);
         Rectangle rect = new Rectangle(0,0,100,40);
-        rect.setFill(Color.GRAY);
+        rect.setFill(Color.PINK);
         scoreStack.getChildren().addAll(rect, textScore);
         mainPane.getChildren().add(scoreStack);
 
         infoTextFaster = new Text("FASTER!");
         infoTextFaster.setStyle("-fx-font: 32 arial;");
         infoTextFaster.setFill(Color.RED);
-        Rectangle rectx = new Rectangle(0,0,300,100);
-        rectx.setFill(Color.rgb(150,0,100,0));
         infos.setLayoutX(100);
         infos.setLayoutY(-100);
-        infos.getChildren().addAll(rectx, infoTextFaster);
+        infos.getChildren().addAll(infoTextFaster);
         mainPane.getChildren().add(infos);
     }
 
+    private void showSaveScoreWindow()
+    {
+        Button button  = new Button("Save");
+        Button goToMenuButton  = new Button("Go to menu");
+        Button restartGameButton  = new Button("Play Again");
+        Text getPlayerName = new Text("Your nickname: ");
+        TextField playerNameTextField = new TextField();
+        saveScoreHBox.setLayoutY(200);
+        saveScoreHBox.setLayoutX(50);
+        saveScoreHBox.setPadding(new Insets(20));
+        saveScoreHBox.setBackground(new Background(new BackgroundFill(Color.PINK,new CornerRadii(1), new Insets(1))));
+        saveScoreHBox.getChildren().addAll(getPlayerName,playerNameTextField,button, goToMenuButton, restartGameButton);
+
+
+        button.setOnAction(e -> {
+            this.playerNickName = playerNameTextField.getText();
+            try {
+                saveScore();
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+            button.setDisable(true);
+            playerNameTextField.setDisable(true);
+        });
+        goToMenuButton.setOnAction(e -> {
+                menuStage.show();
+                mainStage.close();
+        });
+        restartGameButton.setOnAction(e -> {
+            mainStage.close();
+            Game game = new Game();
+            game.createNewGame(menuStage);
+        });
+        mainPane.getChildren().add(saveScoreHBox);
+    }
+    @SuppressWarnings("Duplicates")
+    private void saveScore() throws FileNotFoundException
+    {
+        File file = new File("src/game/score.txt");
+        Scanner in = new Scanner(file);
+        File fileNames = new File("src/game/scoreNames.txt");
+        Scanner inNames = new Scanner(fileNames);
+        for (int i=0;i<5;i++)
+        {
+            scores[i].setFullScore(Integer.parseInt(in.nextLine()));
+            scores[i].setWho(inNames.nextLine());
+        }
+        scores[5].setFullScore(fullScore);
+        scores[5].setWho(playerNickName);
+        Score.b_sort(scores);
+        Score.odwroc(scores);
+        in.close();
+        inNames.close();
+
+        PrintWriter out = new PrintWriter("src/game/score.txt");
+        PrintWriter outNames = new PrintWriter("src/game/scoreNames.txt");
+        for (int i=0;i<6;i++)
+        {
+            out.println(scores[i].getFullScore());
+            outNames.println(scores[i].getWho());
+        }
+
+        out.close();
+        outNames.close();
+
+    }
     /*
     Inicjacja ustawienia gracza w grze
      */
@@ -134,87 +214,17 @@ public class Game
         textScore.setText("STEPS: " + score + "\nSCORE: " + fullScore);
     }
 
-    /*
-    Procedura kontrolujaca koniec gry
-     */
 
-
-    private static void b_sort(int tab[]){
-        int temp;
-        int zmiana = 1;
-        while(zmiana > 0){
-            zmiana = 0;
-            for(int i=0; i<tab.length-1; i++){
-                if(tab[i]>tab[i+1]){
-                    temp = tab[i+1];
-                    tab[i+1] = tab[i];
-                    tab[i] = temp;
-                    zmiana++;
-                }
-            }
-        }
-
-    }
-
-    private static void odwroc(int[] wejscie) {
-
-        // indeks pierwszego elementu
-        int poczatek  = 0;
-        // indeks ostatniego elementu
-        int koniec = wejscie.length-1;
-
-        // dopóki indeks początkowy jest mniejszy od indeksu końcowego
-        while (poczatek < koniec) {
-            // zamieniamy elementy
-            int pomoc = wejscie[poczatek];
-            wejscie[poczatek]  = wejscie[koniec];
-            wejscie[koniec] = pomoc;
-
-            // przesuwamy się w kierunku środka wektora zwiększając i zmniejszając odpowiednio indeksy
-            poczatek++;
-            koniec--;
-        }
-    }
-
-
-
-
-
-    private void isGameOver() throws FileNotFoundException {
+    private void isGameOver() {
         //jezeli pozycja gracza na mapie jest > 800px czyli jest poza oknem wyswietlania to koniec gry
         if(player.getPositionY() > 800) {
 
             gameTimer.stop();
-
-            File file = new File("src/sample/score.txt");
-            Scanner in = new Scanner(file);
-            int wynik[] = new int[6];
-            for (int i=0;i<5;i++)
-            {
-                wynik[i]= Integer.parseInt(in.nextLine());
-            }
-            wynik[5]=fullScore;
-            b_sort(wynik);
-            odwroc(wynik);
-
-
-            PrintWriter zapis = new PrintWriter("src/sample/score.txt");
-            for (int i=0;i<5;i++)
-            {
-                zapis.println(wynik[i]);
-            }
-
-            zapis.close();
-
-
+            showSaveScoreWindow();
         }
-
-
     }
 
-    /*
-    Procedura ruszajaca schodkami w momencie wystartowania gry
-     */
+    /*Procedura ruszajaca schodkami w momencie wystartowania gry*/
     private void startMovingSteps()
     {
         //Uznaje sie, ze gra wystartowala jak gracz znalazl sie ponad 400px okna gry (czyli jego pozycja Y jest mniejsza niz 400px) ( u gory 0 na dole 750)
@@ -231,9 +241,7 @@ public class Game
         }
     }
 
-    /*
-    Procedura poruszajaca `kamera' do gory jezeli gracz znajduje sie przy gornym krancu ekranu
-     */
+    /*Procedura poruszajaca `kamera' do gory jezeli gracz znajduje sie przy gornym krancu ekranu*/
     private void moveCameraUp()
     {
         if(player.getPositionY() < 100)
@@ -310,14 +318,12 @@ public class Game
                 player.animation.setCount(3);
                 player.animation.setOffsetY(55);
                 player.animation.setOffsetX(0);
-                // player.animation.play();
             }
             else if(player.getVelocityX() < 0) { // ruch w lewo sprite chodzenia w lewo
                 player.animation.setColumns(3);
                 player.animation.setCount(3);
                 player.animation.setOffsetY(111);
                 player.animation.setOffsetX(0);
-                //player.animation.play();
             }
             else { //jezeli na schodku to ustawiamy sprite wyswietlajacego spirte stojacego na ziemi
                 player.animation.setOffsetY(0);
@@ -333,7 +339,6 @@ public class Game
             player.animation.setOffsetX(58);
             player.animation.setColumns(1);
             player.animation.setCount(1);
-            //  player.animation.play();
         }
         else if(player.getVelocityY() != 0 && player.getVelocityX() != 0) // sprite skakania w raz z ruchem poziomym
         {
@@ -341,7 +346,6 @@ public class Game
             player.animation.setOffsetX(8);
             player.animation.setColumns(1);
             player.animation.setCount(1);
-            // player.animation.play();
         }
         else
         { // jezeli nie spelniono powyzszych to po prostu sprite stania na schodku
@@ -364,11 +368,8 @@ public class Game
         gameTimer = new AnimationTimer() {
             @Override
             public void handle(long l) {
-             /*   try {
-                    isGameOver();
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }*/
+                isGameOver();
+
                 startMovingSteps();
                 changeStepsVelocity();
                 movePlayer();
@@ -635,18 +636,6 @@ Procedura ustawiania kolorow schodkow (do zmiany na grafike)cc
             }
         });
     }
-
-    /*
-    Procedura inicjalizujaca scene grys
-     */
-    private void initializeStage()
-    {
-        this.mainPane = new AnchorPane();
-        this.mainScene = new Scene(mainPane, WIDTH, HEIGHT);
-        this.mainStage = new Stage();
-        this.mainStage.setScene(mainScene);
-    }
-
 
     private void createBackground()
     {

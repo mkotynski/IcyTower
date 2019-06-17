@@ -1,15 +1,25 @@
 package start;
 
+import game.Score;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import game.Game;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class ViewManager
 {
@@ -28,6 +38,8 @@ public class ViewManager
     private OurSubScene sceneToHide;
     private List<OurButton> menuButtons;
 
+    private Score[] scores = new Score [6];
+    private Label[] scoreLabels = new Label[5];
 
     public ViewManager()
     {
@@ -36,6 +48,8 @@ public class ViewManager
         mainScene = new Scene(mainPane, WIDTH, HEIGHT);
         mainStage = new Stage();
         mainStage.setScene(mainScene);
+        for(int i = 0; i<5;i++) scores[i] = new Score("n",0);
+        for(int i = 0; i<5;i++) scoreLabels[i] = new Label("");
         createSubScenes();
         createButtons();
         createBackground();
@@ -51,6 +65,23 @@ public class ViewManager
 
         subScene.moveSubScene();
         sceneToHide = subScene;
+    }
+
+    @SuppressWarnings("Duplicates")
+    private void getBestScores()throws FileNotFoundException
+    {
+        File file = new File("src/game/score.txt");
+        Scanner in = new Scanner(file);
+        File fileNames = new File("src/game/scoreNames.txt");
+        Scanner inNames = new Scanner(fileNames);
+        for (int i=0;i<5;i++)
+        {
+            scores[i].setFullScore(Integer.parseInt(in.nextLine()));
+            scores[i].setWho(inNames.nextLine());
+        }
+        in.close();
+        inNames.close();
+
     }
 
     private void createSubScenes()
@@ -102,6 +133,28 @@ public class ViewManager
 
         scoreButton.setOnAction(ActionEvent->
         {
+            try { getBestScores(); }
+            catch(Exception e1)
+            {
+                e1.printStackTrace();
+            }
+
+            Label label = new Label("HIGH SCORES");
+            label.setFont(new Font("Arial", 20));
+            label.setTextFill(Color.WHITE);
+
+            VBox vbox = new VBox();
+            vbox.setSpacing(5);
+            vbox.setPadding(new Insets(60, 0, 0, 40));
+            vbox.getChildren().addAll(label);
+            for(int i = 0;i<5;i++)
+            {
+                scoreLabels[i].setText(scores[i].getWho() + " - " + scores[i].getFullScore());
+                scoreLabels[i].setTextFill(Color.WHITE);
+                vbox.getChildren().add(scoreLabels[i]);
+            }
+
+            scoreSubScene.getPane().getChildren().add(vbox);
            showSubScene(scoreSubScene);
         });
     }
