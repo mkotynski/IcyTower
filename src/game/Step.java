@@ -33,33 +33,38 @@ public class Step {
     private ImageView sLeft;
     private ImageView sRight;
 
-    private BackgroundImage backgroundImage = new BackgroundImage( new Image( getClass().getResource("/game/images/step1body.png").toExternalForm(),100,25,false,false), BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, new BackgroundPosition(LEFT,0,false, BOTTOM,0,false), BackgroundSize.DEFAULT);
-    private BackgroundImage backgroundImageBlue = new BackgroundImage( new Image( getClass().getResource("/game/images/step1bodyBLUE.png").toExternalForm(),100,25,false,false), BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, new BackgroundPosition(LEFT,0,false, BOTTOM,0,false), BackgroundSize.DEFAULT);
-    private BackgroundImage backgroundImageGreen = new BackgroundImage( new Image( getClass().getResource("/game/images/step1bodyGreen.png").toExternalForm(),100,25,false,false), BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, new BackgroundPosition(LEFT,0,false, BOTTOM,0,false), BackgroundSize.DEFAULT);
-    private BackgroundImage backgroundImageRed = new BackgroundImage( new Image( getClass().getResource("/game/images/step1bodyRed.png").toExternalForm(),100,25,false,false), BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, new BackgroundPosition(LEFT,0,false, BOTTOM,0,false), BackgroundSize.DEFAULT);
-    private BackgroundImage backgroundImageYellow = new BackgroundImage( new Image( getClass().getResource("/game/images/step1bodyYellow.png").toExternalForm(),100,25,false,false), BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, new BackgroundPosition(LEFT,0,false, BOTTOM,0,false), BackgroundSize.DEFAULT);
+    private BackgroundImage backgroundImage = new BackgroundImage(new Image(getClass().getResource("/game/images/step1body.png").toExternalForm(), 100, 25, false, false), BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, new BackgroundPosition(LEFT, 0, false, BOTTOM, 0, false), BackgroundSize.DEFAULT);
+    private BackgroundImage backgroundImageBlue = new BackgroundImage(new Image(getClass().getResource("/game/images/step1bodyBLUE.png").toExternalForm(), 100, 25, false, false), BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, new BackgroundPosition(LEFT, 0, false, BOTTOM, 0, false), BackgroundSize.DEFAULT);
+    private BackgroundImage backgroundImageGreen = new BackgroundImage(new Image(getClass().getResource("/game/images/step1bodyGreen.png").toExternalForm(), 100, 25, false, false), BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, new BackgroundPosition(LEFT, 0, false, BOTTOM, 0, false), BackgroundSize.DEFAULT);
+    private BackgroundImage backgroundImageRed = new BackgroundImage(new Image(getClass().getResource("/game/images/step1bodyRed.png").toExternalForm(), 100, 25, false, false), BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, new BackgroundPosition(LEFT, 0, false, BOTTOM, 0, false), BackgroundSize.DEFAULT);
+    private BackgroundImage backgroundImageYellow = new BackgroundImage(new Image(getClass().getResource("/game/images/step1bodyYellow.png").toExternalForm(), 100, 25, false, false), BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, new BackgroundPosition(LEFT, 0, false, BOTTOM, 0, false), BackgroundSize.DEFAULT);
 
-
-
+    /**
+     * Zwroc tekst na schodku
+     *
+     * @return textInStep
+     */
     public Text getTextInStep() {
         return textInStep;
     }
 
-    public void setTextInStep(Text textInStep) {
-        this.textInStep = textInStep;
-    }
+    // public void setTextInStep(Text textInStep) {
+    //   this.textInStep = textInStep;
+    //}
 
     private Text textInStep;
 
-    Step(double positionX, double positionY, double width, int i)
-    {
+    /**
+     * Konstrulktor tworzący schodki
+     */
+    Step(double positionX, double positionY, double width, int i) {
         this.index = i;
         this.stack = new StackPane();
         stack.setMinHeight(35);
         textInStep = new Text("-" + index + " - ");
         textInStep.setFill(Color.WHITE);
-        shape = new Rectangle(0,0,width,8);
-        shape.setFill(Color.rgb(200,200,200,0.5)); // hitbox
+        shape = new Rectangle(0, 0, width, 8);
+        shape.setFill(Color.rgb(200, 200, 200, 0.5)); // hitbox
         sLeft = new ImageView(stepLeft);
         sRight = new ImageView(stepRight);
         sRight.setFitHeight(25);
@@ -69,7 +74,7 @@ public class Step {
 
         stack.setBackground(new Background(backgroundImage));
         stack.getChildren().addAll(shape, textInStep, sLeft, sRight);
-        StackPane.setAlignment(textInStep,Pos.BOTTOM_CENTER);
+        StackPane.setAlignment(textInStep, Pos.BOTTOM_CENTER);
         StackPane.setAlignment(shape, Pos.TOP_CENTER);
         StackPane.setAlignment(sLeft, Pos.BOTTOM_LEFT);
         StackPane.setAlignment(sRight, Pos.BOTTOM_RIGHT);
@@ -77,100 +82,134 @@ public class Step {
         this.positionY = positionY;
         this.width = width;
     }
-    public void changeBackgroundImage(int color)
-    {
-        if(color == 1)
-        {
+
+
+    /**
+     * Wybor koloru schodkow
+     *
+     * @param color Kolor
+     */
+
+    public void changeBackgroundImage(int color) {
+
+        if (color == 1) {
             stack.setBackground(new Background(backgroundImageBlue));
             sRight.setImage(stepRightBlue);
             sLeft.setImage(stepLeftBlue);
-        }
-        else if(color == 2)
-        {
+        } else if (color == 2) {
             stack.setBackground(new Background(backgroundImageGreen));
             sRight.setImage(stepRightGreen);
             sLeft.setImage(stepLeftGreen);
-        }
-        else if(color == 3)
-        {
+        } else if (color == 3) {
             stack.setBackground(new Background(backgroundImageRed));
             sRight.setImage(stepRightRed);
             sLeft.setImage(stepLeftRed);
-        }
-        else if(color == 4)
-        {
+        } else if (color == 4) {
             stack.setBackground(new Background(backgroundImageYellow));
             sRight.setImage(stepRightYellow);
             sLeft.setImage(stepLeftYellow);
-        }
-        else
-        {
+        } else {
             stack.setBackground(new Background(backgroundImage));
             sRight.setImage(stepRight);
             sLeft.setImage(stepLeft);
         }
     }
 
+    /**
+     * Daj pozycje Y
+     * @return positionY zwraca pozycje Y
+     */
     public double getPositionY() {
         return positionY;
     }
 
+    /**
+     * Ustaw pozycje Y
+     * @param positionY ustawia pozycje Y
+     */
     public void setPositionY(double positionY) {
         this.positionY = positionY;
     }
 
+    /**
+     * Zwroc pozycje X
+     * @return positionX zwraca pozycje X
+     */
     public double getPositionX() {
         return positionX;
     }
+//
+    //  public void setPositionX(double positionX) {
+    //    this.positionX = positionX;
+    //}
 
-    public void setPositionX(double positionX) {
-        this.positionX = positionX;
-    }
-
+    /**
+     * Zwróć wysokość
+     * @return width metoda dająca wysosc
+     */
     public double getWidth() {
         return width;
     }
 
-    public void setWidth(double width) {
-        this.width = width;
-    }
+    /*   public void setWidth(double width) {
+           this.width = width;
+       }
 
-    public Rectangle getRect() {
-        return rect;
-    }
+       public Rectangle getRect() {
+           return rect;
+       }
 
-    public void setRect(Rectangle rect) {
-        this.rect = rect;
-    }
+       public void setRect(Rectangle rect) {
+           this.rect = rect;
+       }
+   */
 
+    /**
+     * Kwadrat który łapie kolizje przy schodku
+     * @return shape zwraca kwadrat który złapie "kolizję" przy schodku
+     */
     public Rectangle getShape() {
         return shape;
     }
 
-    public void setShape(Rectangle shape) {
-        this.shape = shape;
-    }
+    //    public void setShape(Rectangle shape) {
+    //     this.shape = shape;
+    //  }
 
+    /**
+     * Pobierz stos
+     * @return stack pobiera stos
+     */
     public StackPane getStack() {
         return stack;
     }
 
-    public void setStack(StackPane stack) {
+  /*  public void setStack(StackPane stack) {
         this.stack = stack;
-    }
+    }*/
 
+/*
     public Color getColor() {
         return color;
     }
+*/
 
-    public void setColor(Color color) {
+   /* public void setColor(Color color) {
         this.color = color;
-    }
+    }*/
 
+    /**
+     * Daj indeks
+     * @return index zwraca indeks
+     */
     public int getIndex() {
         return index;
     }
 
+    /**
+     * Ustaw indeks
+     * @param index ustawia ineks
+     */
     public void setIndex(int index) {
         this.index = index;
     }

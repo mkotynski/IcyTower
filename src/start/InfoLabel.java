@@ -11,23 +11,25 @@ import java.io.FileNotFoundException;
 public class InfoLabel extends Label {
     public final static String FONT_PATH = "start/resources/HALO____.TTF";
 
-
-    public InfoLabel(String text)
-    {
+    /**
+    *Metoda tworząca informacyjną etykietę
+     * @param text przyjmuje tekst ktory bedzie wyswietlany
+     */
+    public InfoLabel(String text) {
         setPrefWidth(400);
         setPrefHeight(200);
-        setPadding(new Insets(40,40,40,40));
+        setPadding(new Insets(40, 40, 40, 40));
         setText(text);
         setWrapText(true);
         setLabelFont();
         setStyle("-fx-text-fill: white;");
     }
 
-    private void setLabelFont()
-    {
+
+    private void setLabelFont() {
         try {
-            setFont(Font.loadFont(new FileInputStream(new File(FONT_PATH)),23));
-        } catch(FileNotFoundException e) {
+            setFont(Font.loadFont(new FileInputStream(new File(FONT_PATH)), 23));
+        } catch (FileNotFoundException e) {
             setFont(Font.font("Verdana"));
         }
 

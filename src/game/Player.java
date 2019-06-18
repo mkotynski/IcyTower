@@ -30,6 +30,11 @@ public class Player {
     SpriteAnimation animation;
 
     private Rectangle graph;
+
+    /**
+     * Konstruktor tworzacy gracza
+     *
+     */
     public Player()
     {
         this.graph = new Rectangle(0,0,20,20);
@@ -54,64 +59,104 @@ public class Player {
         animation.setCycleCount(Animation.INDEFINITE);
     }
 
+    /**
+     * Metoda do wyswietlania sprite'a
+     * @return sprite wyswietla sprite'a na ekranie
+     */
     public ImageView getSprite()
     {
         return sprite;
     }
 
+    /**
+     * @return positionX zwraca pozycje X gracza
+     */
     public double getPositionX() {
         return positionX;
     }
 
+    /**
+     * @param positionX ustawia pozycje X gracza
+     */
     public void setPositionX(double positionX) {
         this.positionX = positionX;
     }
-
+    /**
+     * @return positionY zwraca pozycje Y gracza
+     */
     public double getPositionY() {
         return positionY;
     }
 
+    /**
+     * @param positionY ustawia pozycje Y gracza
+     */
     public void setPositionY(double positionY) {
         this.positionY = positionY;
     }
 
+    /**
+     * @return velocityX zwraca prędkość X
+     */
     public double getVelocityX() {
         return velocityX;
     }
 
+    /**
+     * @param velocityX ustawia prędkość X
+     */
     public void setVelocityX(double velocityX) {
         this.velocityX = velocityX;
     }
-
+    /**
+     * @return velocityY zwraca prędkość Y
+     */
     public double getVelocityY() {
         return velocityY;
     }
-
+    /**
+     * @param velocityY ustawia prędkość Y
+     */
     public void setVelocityY(double velocityY) {
         this.velocityY = velocityY;
     }
 
+    /**
+     * @return zwraca czy gracz jest na ziemi
+     */
     public boolean isOnGround() {
         return onGround;
     }
 
+    /**
+     * @param onGround ustawiam pole czy gracz jest na ziemi
+     */
     public void setOnGround(boolean onGround) {
         this.onGround = onGround;
     }
 
+    /**
+     * @return metoda zwracajaca czy gracz spada na dol
+     */
     public boolean isFallingDown() {
         return fallingDown;
     }
 
+    /**
+     * @param fallingDown ustawiam czy gracz spada w dol
+     */
     public void setFallingDown(boolean fallingDown) {
         this.fallingDown = fallingDown;
     }
 
+    /**
+     * @return metoda zwraca grafike na ekran
+     */
     public Rectangle getGraph() {
         return graph;
     }
 
-    public void setGraph(Rectangle graph) {
+ /*   public void setGraph(Rectangle graph) {
         this.graph = graph;
-    }
+    }*/
 }

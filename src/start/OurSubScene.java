@@ -6,20 +6,21 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.util.Duration;
 
-public class OurSubScene extends SubScene
-{
+public class OurSubScene extends SubScene {
     private final static String FONT_PATH = "start/resources/HALO____.TTF";
     private final static String BACKGROUND_IMAGE = "/start/images/button.png";
 
     //private HBox container = new HBox();
     private boolean isHidden;
 
-    public OurSubScene()
-    {
-        super(new AnchorPane(),400,300);
+    /**
+     * Budowa sceny
+     */
+    public OurSubScene() {
+        super(new AnchorPane(), 400, 300);
         prefWidth(400);
         prefHeight(300);
-        BackgroundImage backgroundImage = new BackgroundImage( new Image( getClass().getResource(BACKGROUND_IMAGE).toExternalForm(),400,300,false,false),
+        BackgroundImage backgroundImage = new BackgroundImage(new Image(getClass().getResource(BACKGROUND_IMAGE).toExternalForm(), 400, 300, false, false),
                 BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, null);
         Background background = new Background(backgroundImage);
 
@@ -32,16 +33,19 @@ public class OurSubScene extends SubScene
         setLayoutX(1024);
     }
 
-    public void moveSubScene()
-    {
+    /**
+     * Metode do przeesuwania okno okna wewnetrzenego
+     */
+    public void moveSubScene() {
         TranslateTransition transition = new TranslateTransition();
         transition.setDuration(Duration.seconds(0.3));
         transition.setNode(this);
 
-        if(isHidden) {
+        if (isHidden) {
             transition.setToX(-676);
             isHidden = false;
         } else {
+
             transition.setToX(0);
             isHidden = true;
         }
@@ -49,8 +53,11 @@ public class OurSubScene extends SubScene
         transition.play();
     }
 
-    public AnchorPane getPane()
-    {
+    /**
+     * budowa sceny
+     * @return AnchorPane sluzy ona do budowy sceny
+     */
+    public AnchorPane getPane() {
         return (AnchorPane) this.getRoot();
     }
 }
